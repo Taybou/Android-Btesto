@@ -1,4 +1,4 @@
-package com.example.nourelislamsaidi.numbertowords;
+package com.example.nourelislamsaidi.activities;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
