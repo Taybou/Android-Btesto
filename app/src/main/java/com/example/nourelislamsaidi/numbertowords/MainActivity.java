@@ -34,17 +34,18 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        init();
+        initViews();
         setData();
     }
 
-    private void init() {
+    private void initViews() {
         mLanguageBtnView = (LanguageBtnView) findViewById(R.id.language_btn);
         mCurrencyBtnView = (LanguageBtnView) findViewById(R.id.currency_btn);
     }
 
     private void setData() {
         mLanguageBtnView.setText("Français");
+        mCurrencyBtnView.setText("EUR");
     }
 
     @Override

@@ -11,6 +11,7 @@
         android:id="@+id/language_btn_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
         android:padding="12dp"
         android:textColor="@color/colorPrimary"
         android:textSize="18sp"
@@ -21,7 +22,7 @@
         android:id="@+id/language_btn_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:paddingTop="14dp"
         android:src="@drawable/ic_arrow_down"/>
 
 </LinearLayout>

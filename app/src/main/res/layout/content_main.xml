@@ -19,6 +19,8 @@
             android:id="@+id/language_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:background="@drawable/ripple_accent_drawable"
+            android:clickable="true"
             android:layout_weight="1"/>
 
         <com.example.nourelislamsaidi.numbertowords.views.LanguageBtnView
@@ -48,11 +50,12 @@
             <TextView
                 android:id="@+id/editText"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="300dp"
                 android:ems="10"
                 android:gravity="center"
                 android:inputType="textMultiLine"
-                android:textColor="@color/colorAccent"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/grey"
                 android:textSize="20sp"
                 tools:text="Mille cent"/>
 
@@ -90,6 +93,22 @@
 
 
     </android.support.v7.widget.CardView>
+
+    <EditText
+        android:id="@+id/edit_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/rounder_corner"
+        android:ems="10"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:hint="8888"
+        android:inputType="numberDecimal"
+        android:padding="24dp"/>
+
 
 
 </LinearLayout>
