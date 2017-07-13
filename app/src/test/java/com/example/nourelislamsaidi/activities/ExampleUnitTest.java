@@ -25,7 +25,9 @@ public class ExampleUnitTest {
     public void testDigit() throws Exception {
         // TEST ANY
 
-        assertEquals("vingt et un EURO et vingt-six", utils.getFrenchWord("21.26", "EURO"));
+        assertEquals("vingt-six CENTIMES", utils.getFrenchWord(".26", "EURO"));
+
+        assertEquals("vingt et un EURO et vingt-six CENTIMES", utils.getFrenchWord("21.26", "EURO"));
 
         assertEquals("vingt et un EURO", utils.getFrenchWord("21", "EURO"));
         assertEquals("vingt-six EURO", utils.getFrenchWord("26", "EURO"));
