@@ -11,14 +11,19 @@ public class Utils {
     private static final String DASH_SEPARATOR = "-";
     private static final String POINT_SEPARATOR = "\\.";
     private static final String S_CHAR = "s";
+    private static final String CENTS = "CENTIMES";
 
     public String getFrenchWord(String number, String currency) {
-        String word;
+        String word = "";
         String beforePoint = number.split(POINT_SEPARATOR)[0];
-        word = getWordFromNumber(beforePoint) + SPACE_SEPARATOR + currency;
+        if (!beforePoint.equals("")) {
+            word = getWordFromNumber(beforePoint) + SPACE_SEPARATOR + currency;
+        }
+
         if (number.contains(".")) {
             String afterPoint = number.split(POINT_SEPARATOR)[1];
-            word += AND_SEPARATOR + getWordFromNumber(afterPoint);
+            word += (!beforePoint.equals("") ? AND_SEPARATOR : "")
+                    + getWordFromNumber(afterPoint) + SPACE_SEPARATOR + CENTS;
         }
 
         return word;
@@ -32,82 +37,60 @@ public class Utils {
         // Number greater than TRILLION
         if ((mNumber > 999999999999L)) {
             thousands = mNumber / 1000000000000L;
-
-            word += (thousands == 1)
-                    ? NumberToWordFrench.ARRAY_FRENCH.get(1L) + SPACE_SEPARATOR + NumberToWordFrench.ARRAY_FRENCH.get(1000000000000L)
-                    :
-                    (
-                            (getWordOfLowerDigit(thousands).equals("deux cents"))
-                                    ? getWordOfLowerDigit(thousands).substring(0, getWordOfLowerDigit(thousands).length() - 1)
-                                    : getWordOfLowerDigit(thousands)
-                    )
-                            + SPACE_SEPARATOR
-                            + NumberToWordFrench.ARRAY_FRENCH.get(1000000000000L)
-                            + S_CHAR;
-
             mNumber = mNumber - (1000000000000L * thousands);
+
+            word += getWordOfDigit(thousands, 1000000000000L, false);
         }
 
         // Number less than TRILLION
         if ((mNumber > 999999999) && (mNumber < 1000000000000L)) {
             word += (word == "") ? "" : SPACE_SEPARATOR;
             thousands = mNumber / 1000000000;
-
-            word += (thousands == 1)
-                    ? NumberToWordFrench.ARRAY_FRENCH.get(1L) + SPACE_SEPARATOR + NumberToWordFrench.ARRAY_FRENCH.get(1000000000L)
-                    :
-                    (
-                            (getWordOfLowerDigit(thousands).equals("deux cents"))
-                                    ? getWordOfLowerDigit(thousands).substring(0, getWordOfLowerDigit(thousands).length() - 1)
-                                    : getWordOfLowerDigit(thousands)
-                    )
-                            + SPACE_SEPARATOR
-                            + NumberToWordFrench.ARRAY_FRENCH.get(1000000000L)
-                            + S_CHAR;
-
             mNumber = mNumber - (1000000000 * thousands);
+
+            word += getWordOfDigit(thousands, 1000000000L, false);
         }
 
         // Number less than BILLION
         if (mNumber > 999999 && mNumber < 1000000000) {
             word += (word == "") ? "" : SPACE_SEPARATOR;
             thousands = mNumber / 1000000;
-
-            word += (thousands == 1)
-                    ? NumberToWordFrench.ARRAY_FRENCH.get(1L) + SPACE_SEPARATOR + NumberToWordFrench.ARRAY_FRENCH.get(1000000L)
-                    :
-                    (
-                            (getWordOfLowerDigit(thousands).equals("deux cents"))
-                                    ? getWordOfLowerDigit(thousands).substring(0, getWordOfLowerDigit(thousands).length() - 1)
-                                    : getWordOfLowerDigit(thousands)
-                    )
-                            + SPACE_SEPARATOR
-                            + NumberToWordFrench.ARRAY_FRENCH.get(1000000L)
-                            + S_CHAR;
-
             mNumber = mNumber - (1000000 * thousands);
+
+            word += getWordOfDigit(thousands, 1000000L, false);
         }
 
         // Number between 1000 and 999999
         if (mNumber > 999 && mNumber < 1000000) {
             word += (word == "") ? "" : SPACE_SEPARATOR;
             thousands = mNumber / 1000;
-
-            word += (thousands == 1)
-                    ? NumberToWordFrench.ARRAY_FRENCH.get(1000L)
-                    :
-                    (
-                            (getWordOfLowerDigit(thousands).equals("deux cents"))
-                                    ? getWordOfLowerDigit(thousands).substring(0, getWordOfLowerDigit(thousands).length() - 1)
-                                    : getWordOfLowerDigit(thousands)
-                    )
-                            + SPACE_SEPARATOR
-                            + NumberToWordFrench.ARRAY_FRENCH.get(1000L);
-
             mNumber = mNumber - (1000 * thousands);
+
+            word += getWordOfDigit(thousands, 1000L, true);
         }
 
         word += ((word == "" || getWordOfLowerDigit(mNumber) == "") ? "" : SPACE_SEPARATOR) + getWordOfLowerDigit(mNumber);
+        return word;
+    }
+
+    // Number between interval
+    private String getWordOfDigit(long digit, long digitUsed, boolean onlyFourThousands) {
+        String word = (digit == 1)
+                ?
+                (
+                        onlyFourThousands
+                                ? NumberToWordFrench.ARRAY_FRENCH.get(1000L)
+                                : NumberToWordFrench.ARRAY_FRENCH.get(1L) + SPACE_SEPARATOR + NumberToWordFrench.ARRAY_FRENCH.get(digitUsed)
+                )
+                :
+                (
+                        getWordOfLowerDigit(digit).equals("deux cents")
+                                ? getWordOfLowerDigit(digit).substring(0, getWordOfLowerDigit(digit).length() - 1)
+                                : getWordOfLowerDigit(digit)
+                )
+                        + SPACE_SEPARATOR
+                        + NumberToWordFrench.ARRAY_FRENCH.get(digitUsed)
+                        + (onlyFourThousands ? "" : S_CHAR);
         return word;
     }
 
