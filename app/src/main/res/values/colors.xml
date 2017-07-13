@@ -6,5 +6,7 @@
 
     <!-- Transparent -->
     <color name="transparent">#00ffffff</color>
+    <color name="grey">#757575</color>
+
 
 </resources>
