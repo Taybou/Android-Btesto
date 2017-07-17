@@ -2,11 +2,8 @@ package com.example.nourelislamsaidi.utils;
 
 import java.util.HashMap;
 
-/**
- * Created by MOHAMEDTAYEBBenterki on 04/06/2017.
- */
-
 public class NumberToWordFrench {
+    public static final String ZERO = "zero";
     public static final String ONE = "un";
     public static final String TWO = "deux";
     public static final String THREE = "trois";
@@ -42,6 +39,7 @@ public class NumberToWordFrench {
     //Init Map
     public static final HashMap<Long, String> ARRAY_FRENCH = new HashMap<Long, String>() {
         {
+            put(0L, ZERO);
             put(1L, ONE);
             put(2L, TWO);
             put(3L, THREE);

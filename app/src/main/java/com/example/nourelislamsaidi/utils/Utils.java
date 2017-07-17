@@ -1,11 +1,6 @@
 package com.example.nourelislamsaidi.utils;
 
-/**
- * Created by MOHAMEDTAYEBBenterki on 03/06/2017.
- */
-
 public class Utils {
-
     private static final String SPACE_SEPARATOR = " ";
     private static final String AND_SEPARATOR = " et ";
     private static final String DASH_SEPARATOR = "-";
@@ -16,12 +11,20 @@ public class Utils {
     public static String getFrenchWord(String number, String currency) {
         String word = "";
         String beforePoint = number.split(POINT_SEPARATOR)[0];
+        if (beforePoint.equals("1000000000000000L")) {
+            return "Erreur";
+        }
+
         if (!beforePoint.equals("")) {
             word = getWordFromNumber(beforePoint) + SPACE_SEPARATOR + currency;
         }
 
         if (number.contains(".")) {
             String afterPoint = number.split(POINT_SEPARATOR)[1];
+            if (afterPoint.equals("1000000000000000L")) {
+                return "Erreur";
+            }
+
             word += (!beforePoint.equals("") ? AND_SEPARATOR : "")
                     + getWordFromNumber(afterPoint) + SPACE_SEPARATOR + CENTS;
         }
@@ -34,42 +37,47 @@ public class Utils {
         long thousands;
         long mNumber = Long.valueOf(number);
 
-        // Number greater than TRILLION
-        if ((mNumber > 999999999999L)) {
-            thousands = mNumber / 1000000000000L;
-            mNumber = mNumber - (1000000000000L * thousands);
+        if (mNumber == 0) {
+            word += NumberToWordFrench.ARRAY_FRENCH.get(mNumber);
+        } else {
 
-            word += getWordOfDigit(thousands, 1000000000000L, false);
+            // Number greater than TRILLION
+            if ((mNumber > 999999999999L)) {
+                thousands = mNumber / 1000000000000L;
+                mNumber = mNumber - (1000000000000L * thousands);
+
+                word += getWordOfDigit(thousands, 1000000000000L, false);
+            }
+
+            // Number less than TRILLION
+            if ((mNumber > 999999999) && (mNumber < 1000000000000L)) {
+                word += (word == "") ? "" : SPACE_SEPARATOR;
+                thousands = mNumber / 1000000000;
+                mNumber = mNumber - (1000000000 * thousands);
+
+                word += getWordOfDigit(thousands, 1000000000L, false);
+            }
+
+            // Number less than BILLION
+            if (mNumber > 999999 && mNumber < 1000000000) {
+                word += (word == "") ? "" : SPACE_SEPARATOR;
+                thousands = mNumber / 1000000;
+                mNumber = mNumber - (1000000 * thousands);
+
+                word += getWordOfDigit(thousands, 1000000L, false);
+            }
+
+            // Number between 1000 and 999999
+            if (mNumber > 999 && mNumber < 1000000) {
+                word += (word == "") ? "" : SPACE_SEPARATOR;
+                thousands = mNumber / 1000;
+                mNumber = mNumber - (1000 * thousands);
+
+                word += getWordOfDigit(thousands, 1000L, true);
+            }
+
+            word += ((word == "" || getWordOfLowerDigit(mNumber) == "") ? "" : SPACE_SEPARATOR) + getWordOfLowerDigit(mNumber);
         }
-
-        // Number less than TRILLION
-        if ((mNumber > 999999999) && (mNumber < 1000000000000L)) {
-            word += (word == "") ? "" : SPACE_SEPARATOR;
-            thousands = mNumber / 1000000000;
-            mNumber = mNumber - (1000000000 * thousands);
-
-            word += getWordOfDigit(thousands, 1000000000L, false);
-        }
-
-        // Number less than BILLION
-        if (mNumber > 999999 && mNumber < 1000000000) {
-            word += (word == "") ? "" : SPACE_SEPARATOR;
-            thousands = mNumber / 1000000;
-            mNumber = mNumber - (1000000 * thousands);
-
-            word += getWordOfDigit(thousands, 1000000L, false);
-        }
-
-        // Number between 1000 and 999999
-        if (mNumber > 999 && mNumber < 1000000) {
-            word += (word == "") ? "" : SPACE_SEPARATOR;
-            thousands = mNumber / 1000;
-            mNumber = mNumber - (1000 * thousands);
-
-            word += getWordOfDigit(thousands, 1000L, true);
-        }
-
-        word += ((word == "" || getWordOfLowerDigit(mNumber) == "") ? "" : SPACE_SEPARATOR) + getWordOfLowerDigit(mNumber);
         return word;
     }
 
@@ -100,6 +108,7 @@ public class Utils {
         long hundreds;
         long tens;
         long units;
+
 
         // Number between 100 and 999
         if (number > 99 && number < 1000) {
@@ -148,5 +157,4 @@ public class Utils {
 
         return word;
     }
-
 }
