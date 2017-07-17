@@ -25,10 +25,12 @@ public class ExampleUnitTest {
     public void testDigit() throws Exception {
         // TEST ANY
 
-        assertEquals("vingt-six CENTIMES", utils.getFrenchWord(".26", "EURO"));
+        // FAKE USE CASE :p
+        // assertEquals("zero EURO", Utils.getFrenchWord(".00000123", "EURO"));
 
+        assertEquals("zero EURO", Utils.getFrenchWord("0", "EURO"));
+        assertEquals("vingt-six CENTIMES", Utils.getFrenchWord(".26", "EURO"));
         assertEquals("vingt et un EURO et vingt-six CENTIMES", utils.getFrenchWord("21.26", "EURO"));
-
         assertEquals("vingt et un EURO", utils.getFrenchWord("21", "EURO"));
         assertEquals("vingt-six EURO", utils.getFrenchWord("26", "EURO"));
 
@@ -87,7 +89,7 @@ public class ExampleUnitTest {
         assertEquals("un billion EURO", utils.getFrenchWord("1000000000000", "EURO"));
         assertEquals("six cent soixante-six billions six cent soixante-six milliards six cent soixante-six millions six cent soixante-six mille six cent soixante-six EURO",
                 utils.getFrenchWord("666666666666666", "EURO"));
-
+        assertEquals("Erreur", Utils.getFrenchWord("1000000000000000L", "EURO"));
         // IF WE NEED ANOTHER USE CASE
         // assertEquals(" EURO", utils.getFrenchWord("", "EURO"));
     }
