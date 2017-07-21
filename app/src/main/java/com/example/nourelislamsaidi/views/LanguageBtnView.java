@@ -1,4 +1,4 @@
-package com.example.nourelislamsaidi.numbertowords.views;
+package com.example.nourelislamsaidi.views;
 
 import android.content.Context;
 import android.os.Build;
@@ -60,6 +60,14 @@ public class LanguageBtnView extends FrameLayout {
     }
 
     /**
+     * Get Text value
+     * @return
+     */
+    public String getText(){
+        return mTitleTv.getText().toString();
+    }
+
+    /**
      * Set icon of button
      * @param icon from drawable
      */
@@ -67,5 +75,12 @@ public class LanguageBtnView extends FrameLayout {
         mIconImgV.setImageResource(icon);
     }
 
+    /**
+     * Set icon visible or gone
+     * @param visibility int
+     */
+    public void setIconVisibility(int visibility){
+        mIconImgV.setVisibility(visibility);
+    }
 
 }

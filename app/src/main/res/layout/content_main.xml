@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.nourelislamsaidi.numbertowords.MainActivity"
+    tools:context="com.example.nourelislamsaidi.activities.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
     <LinearLayout
@@ -15,19 +15,21 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <com.example.nourelislamsaidi.numbertowords.views.LanguageBtnView
+        <com.example.nourelislamsaidi.views.LanguageBtnView
             android:id="@+id/language_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:background="@drawable/ripple_accent_drawable"
-            android:clickable="true"
-            android:layout_weight="1"/>
+            android:clickable="true"/>
 
-        <com.example.nourelislamsaidi.numbertowords.views.LanguageBtnView
+        <com.example.nourelislamsaidi.views.LanguageBtnView
             android:id="@+id/currency_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:background="@drawable/ripple_accent_drawable"
+            android:clickable="true"/>
 
     </LinearLayout>
 
@@ -48,13 +50,18 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/editText"
+                android:id="@+id/word_amount"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:ems="10"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:inputType="textMultiLine"
-                android:fontFamily="sans-serif-medium"
+                android:lineSpacingExtra="4dp"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
+                android:paddingTop="16dp"
+                android:textAllCaps="true"
                 android:textColor="@color/grey"
                 android:textSize="20sp"
                 tools:text="Mille cent"/>
@@ -103,12 +110,11 @@
         android:layout_marginTop="32dp"
         android:background="@drawable/rounder_corner"
         android:ems="10"
-        android:textSize="24sp"
         android:gravity="center"
         android:hint="8888"
         android:inputType="numberDecimal"
-        android:padding="24dp"/>
-
+        android:padding="24dp"
+        android:textSize="24sp"/>
 
 
 </LinearLayout>

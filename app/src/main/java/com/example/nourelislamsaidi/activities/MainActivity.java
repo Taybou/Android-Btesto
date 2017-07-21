@@ -7,11 +7,30 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.example.nourelislamsaidi.numbertowords.R;
+import com.example.nourelislamsaidi.utils.Utils;
+import com.example.nourelislamsaidi.views.LanguageBtnView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private LanguageBtnView mLanguageBtnView;
+    private LanguageBtnView mCurrencyBtnView;
+
+    private EditText mEditNumber;
+    private TextView mWordAmount;
+
+    Animation mAnim;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +47,10 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        initAnimation();
+        initViews();
+        setData();
     }
 
     @Override
@@ -86,4 +109,62 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private void initViews() {
+        mLanguageBtnView = (LanguageBtnView) findViewById(R.id.language_btn);
+        mCurrencyBtnView = (LanguageBtnView) findViewById(R.id.currency_btn);
+        mEditNumber = (EditText) findViewById(R.id.edit_number);
+        mWordAmount = (TextView) findViewById(R.id.word_amount);
+
+        mLanguageBtnView.setIconVisibility(View.GONE);
+        mCurrencyBtnView.setIconVisibility(View.GONE);
+
+        animateEditText(true);
+        onEditNumberTextChange();
+    }
+
+    private void setData() {
+        mLanguageBtnView.setText("Français");
+        mCurrencyBtnView.setText("EUR");
+    }
+
+    private void onEditNumberTextChange() {
+        mEditNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() != 0) {
+                    animateEditText(false);
+                    String frenchWord = Utils.getFrenchWord(s.toString(), mCurrencyBtnView.getText());
+                    mWordAmount.setText(frenchWord);
+                } else {
+                    mWordAmount.setText("");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+    }
+
+    private void initAnimation (){
+        mAnim = new AlphaAnimation(0.0f, 1.0f);
+    }
+
+    private void animateEditText(boolean showAnimation) {
+        if (showAnimation) {
+            mAnim.setDuration(2000);
+            mAnim.setStartOffset(20);
+            mAnim.setRepeatMode(Animation.REVERSE);
+            mAnim.setRepeatCount(10);
+            mEditNumber.startAnimation(mAnim);
+        } else {
+            mEditNumber.clearAnimation();
+        }
+    }
+
 }
