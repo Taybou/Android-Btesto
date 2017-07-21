@@ -22,7 +22,7 @@ public class ExampleUnitTest {
     }
 
     @Test
-    public void testDigit() throws Exception {
+    public void testDigitFrench() throws Exception {
         // TEST ANY
 
         // FAKE USE CASE :p
@@ -92,5 +92,45 @@ public class ExampleUnitTest {
         assertEquals("Erreur", Utils.getFrenchWord("1000000000000000L", "EURO"));
         // IF WE NEED ANOTHER USE CASE
         // assertEquals(" EURO", utils.getFrenchWord("", "EURO"));
+    }
+
+    @Test
+    public void testDigitArabic() throws Exception {
+
+        // TEST 0 - 99
+        assertEquals("صفر دولار", Utils.getArabicWord("0", "دولار"));
+        assertEquals("خمسة عشر دولار", Utils.getArabicWord("15", "دولار"));
+        assertEquals("تسعة وعشرون دولار", Utils.getArabicWord("29", "دولار"));
+        assertEquals("سبعون دولار", Utils.getArabicWord("70", "دولار"));
+        assertEquals("تسعة وتسعون دولار", Utils.getArabicWord("99", "دولار"));
+
+        // TEST 100
+        assertEquals("تسعمائة وأربعة وعشرون دولار", Utils.getArabicWord("924", "دولار"));
+        assertEquals("ثلاثمائة وعشرة دولار", Utils.getArabicWord("310", "دولار"));
+        assertEquals("ستمائة وسبعة وخمسون دولار", Utils.getArabicWord("657", "دولار"));
+
+
+        // TEST 1000
+        assertEquals("ثلاثمائة ألفاً دولار", Utils.getArabicWord("300000", "دولار"));
+        assertEquals("ثلاثون ألفاً وثلاثة دولار", Utils.getArabicWord("30003", "دولار"));
+        assertEquals("مئة وأحد عشر ألفاً دولار", Utils.getArabicWord("111000", "دولار"));
+        assertEquals("ألف وخمسمائة وثلاثة وأربعون دولار", Utils.getArabicWord("1543", "دولار"));
+        assertEquals("ألفان وأربعة دولار", Utils.getArabicWord("2004", "دولار"));
+
+        // TEST >Million
+        assertEquals("تسعون مليونا دولار", Utils.getArabicWord("90000000", "دولار"));
+        assertEquals("تسعون مليونا وثمانية عشر دولار", Utils.getArabicWord("90000018", "دولار"));
+        assertEquals("عشرة ملايين واثنان دولار", Utils.getArabicWord("10000002", "دولار"));
+        assertEquals("مليونان وثمانية وتسعون دولار", Utils.getArabicWord("2000098", "دولار"));
+
+
+        // BILLION
+
+
+        // TRILLION
+        assertEquals("Erreur", Utils.getFrenchWord("1000000000000000L", "EURO"));
+
+//        assertEquals(" دولار", Utils.getArabicWord("", "دولار"));
+//        assertEquals(" دولار", Utils.getArabicWord("", "دولار"));
     }
 }
