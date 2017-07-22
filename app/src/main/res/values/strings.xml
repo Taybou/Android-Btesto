@@ -5,4 +5,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="hint">8888</string>
+    <string name="no_amount">Veuillez saisir un montant</string>
+    <string name="io.branch.apiKey" translatable="false">key_live_emyr4cLKIsadx9sDczQetefexyoJLMRK</string>
+    <string name="amount_copied">Le text a été copié</string>
 </resources>

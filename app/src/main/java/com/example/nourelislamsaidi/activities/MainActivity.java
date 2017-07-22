@@ -1,6 +1,11 @@
 package com.example.nourelislamsaidi.activities;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,14 +20,19 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.nourelislamsaidi.numbertowords.R;
 import com.example.nourelislamsaidi.utils.Utils;
 import com.example.nourelislamsaidi.views.LanguageBtnView;
 
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        View.OnClickListener {
 
     private LanguageBtnView mLanguageBtnView;
     private LanguageBtnView mCurrencyBtnView;
@@ -30,7 +40,14 @@ public class MainActivity extends AppCompatActivity
     private EditText mEditNumber;
     private TextView mWordAmount;
 
+    private ImageView mClearView;
+    private ImageView mSpeechView;
+    private ImageView mCopyView;
+
+    private TextToSpeech mTextToSpeech;
+
     Animation mAnim;
+    private ClipboardManager mClipboardManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +65,12 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        intAmountToSpeech();
         initAnimation();
         initViews();
         setData();
+
+        mClipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
     }
 
     @Override
@@ -110,11 +130,37 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.clear_btn:
+                mEditNumber.setText("");
+                break;
+            case R.id.speech_btn:
+                onAmountToSpeechClick(mWordAmount.getText().toString());
+                break;
+            case R.id.copy_btn:
+                copyText();
+                break;
+
+
+        }
+    }
+
     private void initViews() {
         mLanguageBtnView = (LanguageBtnView) findViewById(R.id.language_btn);
         mCurrencyBtnView = (LanguageBtnView) findViewById(R.id.currency_btn);
         mEditNumber = (EditText) findViewById(R.id.edit_number);
         mWordAmount = (TextView) findViewById(R.id.word_amount);
+
+        mClearView = (ImageView) findViewById(R.id.clear_btn);
+        mClearView.setOnClickListener(this);
+
+        mCopyView = (ImageView) findViewById(R.id.copy_btn);
+        mCopyView.setOnClickListener(this);
+
+        mSpeechView = (ImageView) findViewById(R.id.speech_btn);
+        mSpeechView.setOnClickListener(this);
 
         mLanguageBtnView.setIconVisibility(View.GONE);
         mCurrencyBtnView.setIconVisibility(View.GONE);
@@ -125,7 +171,7 @@ public class MainActivity extends AppCompatActivity
 
     private void setData() {
         mLanguageBtnView.setText("Français");
-        mCurrencyBtnView.setText("EUR");
+        mCurrencyBtnView.setText("EURO");
     }
 
     private void onEditNumberTextChange() {
@@ -151,7 +197,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void initAnimation (){
+    private void initAnimation() {
         mAnim = new AlphaAnimation(0.0f, 1.0f);
     }
 
@@ -167,4 +213,37 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void copyText() {
+
+        if (!mWordAmount.getText().toString().isEmpty()) {
+            ClipData clip = ClipData.newPlainText(mEditNumber.getText(), mWordAmount.getText());
+            mClipboardManager.setPrimaryClip(clip);
+            Toast.makeText(this, R.string.amount_copied, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, R.string.no_amount, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void intAmountToSpeech() {
+        mTextToSpeech = new TextToSpeech(getBaseContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    mTextToSpeech.setLanguage(Locale.FRENCH);
+                }
+            }
+        });
+    }
+
+    private void onAmountToSpeechClick(String toSpeak) {
+        if (!toSpeak.isEmpty()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mTextToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, null);
+            } else {
+                mTextToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+            }
+        } else {
+            Toast.makeText(this, R.string.no_amount, Toast.LENGTH_SHORT).show();
+        }
+    }
 }

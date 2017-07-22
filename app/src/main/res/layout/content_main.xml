@@ -73,26 +73,29 @@
 
 
                 <ImageView
+                    android:id="@+id/copy_btn"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@color/transparent"
+                    android:background="@drawable/ripple_accent_drawable"
                     android:padding="@dimen/icon_padding"
                     android:src="@drawable/ic_content_copy"/>
 
                 <ImageView
+                    android:id="@+id/speech_btn"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@color/transparent"
+                    android:background="@drawable/ripple_accent_drawable"
                     android:padding="@dimen/icon_padding"
                     android:src="@drawable/ic_mic"/>
 
                 <ImageView
+                    android:id="@+id/clear_btn"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@color/transparent"
+                    android:background="@drawable/ripple_accent_drawable"
                     android:padding="@dimen/icon_padding"
                     android:src="@drawable/ic_clear"/>
             </LinearLayout>
@@ -111,7 +114,7 @@
         android:background="@drawable/rounder_corner"
         android:ems="10"
         android:gravity="center"
-        android:hint="8888"
+        android:hint="@string/hint"
         android:inputType="numberDecimal"
         android:padding="24dp"
         android:textSize="24sp"/>
