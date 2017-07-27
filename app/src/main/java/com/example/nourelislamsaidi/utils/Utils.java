@@ -13,7 +13,7 @@ public class Utils {
     private static final String S_CHAR = "s";
     private static final String CENTS = "CENTIMES";
 
-    public String getFrenchWord(String number, String currency) {
+    public static String getFrenchWord(String number, String currency) {
         String word = "";
         String beforePoint = number.split(POINT_SEPARATOR)[0];
         if (!beforePoint.equals("")) {
@@ -29,7 +29,7 @@ public class Utils {
         return word;
     }
 
-    private String getWordFromNumber(String number) {
+    private static String getWordFromNumber(String number) {
         String word = "";
         long thousands;
         long mNumber = Long.valueOf(number);
@@ -74,7 +74,7 @@ public class Utils {
     }
 
     // Number between interval
-    private String getWordOfDigit(long digit, long digitUsed, boolean onlyFourThousands) {
+    private static String getWordOfDigit(long digit, long digitUsed, boolean onlyFourThousands) {
         String word = (digit == 1)
                 ?
                 (
@@ -95,7 +95,7 @@ public class Utils {
     }
 
     // Number low than 1000
-    private String getWordOfLowerDigit(long number) {
+    private static String getWordOfLowerDigit(long number) {
         String word = "";
         long hundreds;
         long tens;

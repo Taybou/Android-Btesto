@@ -1,17 +1,53 @@
 package com.example.nourelislamsaidi.activities;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.nourelislamsaidi.numbertowords.R;
+import com.example.nourelislamsaidi.utils.Utils;
+import com.example.nourelislamsaidi.views.LanguageBtnView;
+
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        View.OnClickListener {
+
+    private LanguageBtnView mLanguageBtnView;
+    private LanguageBtnView mCurrencyBtnView;
+
+    private EditText mEditNumber;
+    private TextView mWordAmount;
+
+    private ImageView mClearView;
+    private ImageView mSpeechView;
+    private ImageView mCopyView;
+
+    private TextToSpeech mTextToSpeech;
+
+    Animation mAnim;
+    private ClipboardManager mClipboardManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +64,13 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        intAmountToSpeech();
+        initAnimation();
+        initViews();
+        setData();
+
+        mClipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
     }
 
     @Override
@@ -85,5 +128,122 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.clear_btn:
+                mEditNumber.setText("");
+                break;
+            case R.id.speech_btn:
+                onAmountToSpeechClick(mWordAmount.getText().toString());
+                break;
+            case R.id.copy_btn:
+                copyText();
+                break;
+
+
+        }
+    }
+
+    private void initViews() {
+        mLanguageBtnView = (LanguageBtnView) findViewById(R.id.language_btn);
+        mCurrencyBtnView = (LanguageBtnView) findViewById(R.id.currency_btn);
+        mEditNumber = (EditText) findViewById(R.id.edit_number);
+        mWordAmount = (TextView) findViewById(R.id.word_amount);
+
+        mClearView = (ImageView) findViewById(R.id.clear_btn);
+        mClearView.setOnClickListener(this);
+
+        mCopyView = (ImageView) findViewById(R.id.copy_btn);
+        mCopyView.setOnClickListener(this);
+
+        mSpeechView = (ImageView) findViewById(R.id.speech_btn);
+        mSpeechView.setOnClickListener(this);
+
+        mLanguageBtnView.setIconVisibility(View.GONE);
+        mCurrencyBtnView.setIconVisibility(View.GONE);
+
+        animateEditText(true);
+        onEditNumberTextChange();
+    }
+
+    private void setData() {
+        mLanguageBtnView.setText("Français");
+        mCurrencyBtnView.setText("EURO");
+    }
+
+    private void onEditNumberTextChange() {
+        mEditNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() != 0) {
+                    animateEditText(false);
+                    String frenchWord = Utils.getFrenchWord(s.toString(), mCurrencyBtnView.getText());
+                    mWordAmount.setText(frenchWord);
+                } else {
+                    mWordAmount.setText("");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+    }
+
+    private void initAnimation() {
+        mAnim = new AlphaAnimation(0.0f, 1.0f);
+    }
+
+    private void animateEditText(boolean showAnimation) {
+        if (showAnimation) {
+            mAnim.setDuration(2000);
+            mAnim.setStartOffset(20);
+            mAnim.setRepeatMode(Animation.REVERSE);
+            mAnim.setRepeatCount(10);
+            mEditNumber.startAnimation(mAnim);
+        } else {
+            mEditNumber.clearAnimation();
+        }
+    }
+
+    private void copyText() {
+
+        if (!mWordAmount.getText().toString().isEmpty()) {
+            ClipData clip = ClipData.newPlainText(mEditNumber.getText(), mWordAmount.getText());
+            mClipboardManager.setPrimaryClip(clip);
+            Toast.makeText(this, R.string.amount_copied, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, R.string.no_amount, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void intAmountToSpeech() {
+        mTextToSpeech = new TextToSpeech(getBaseContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    mTextToSpeech.setLanguage(Locale.FRENCH);
+                }
+            }
+        });
+    }
+
+    private void onAmountToSpeechClick(String toSpeak) {
+        if (!toSpeak.isEmpty()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mTextToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, null);
+            } else {
+                mTextToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+            }
+        } else {
+            Toast.makeText(this, R.string.no_amount, Toast.LENGTH_SHORT).show();
+        }
     }
 }
