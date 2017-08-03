@@ -170,7 +170,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setData() {
-        mLanguageBtnView.setText("Français");
+        String language = getResources().getString(R.string.language_text);
+
+        mLanguageBtnView.setText(language);
         mCurrencyBtnView.setText("EURO");
     }
 
