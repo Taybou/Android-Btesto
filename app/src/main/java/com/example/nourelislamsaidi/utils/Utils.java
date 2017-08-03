@@ -1,5 +1,9 @@
 package com.example.nourelislamsaidi.utils;
 
+import android.content.Context;
+
+import com.example.nourelislamsaidi.numbertowords.R;
+
 public class Utils {
     private static final String SPACE_SEPARATOR = " ";
     private static final String FRENCH_AND_SEPARATOR = " et ";
@@ -12,31 +16,38 @@ public class Utils {
     private static final String ARABIC_AND_SEPARATOR = " و";
 
     private static final int TWO_ELEMENTS = 2;
+    private static final int LENGTH_MAX_VALUE = 15;
+
+    private static Context mContext;
+
+    public static void setContext(Context context) {
+        mContext = context;
+    }
 
     // ---------- ARABIC -------------
     public static String getArabicWord(String number, String currency) {
         String word = "";
-        String beforePoint = number.split(POINT_SEPARATOR)[0];
-        if (beforePoint.equals("1000000000000000L")) {
-            return "Erreur";
-        }
+        if (!number.equals(".")) {
+            String beforePoint = number.split(POINT_SEPARATOR)[0];
 
-        if (!beforePoint.equals("")) {
-            word = getArabicWordFromNumber(beforePoint) + SPACE_SEPARATOR + currency;
-        }
+            if (beforePoint.length() > LENGTH_MAX_VALUE)
+                return mContext.getResources().getString(R.string.error_text);
 
-        if (number.contains(".")) {
-            String afterPoint = (number.split(POINT_SEPARATOR).length < TWO_ELEMENTS) ? "" : number.split(POINT_SEPARATOR)[1];
-            if (!afterPoint.isEmpty()) {
-                if (afterPoint.equals("1000000000000000L")) {
-                    return "Erreur";
+            if (!beforePoint.isEmpty()) {
+                word = getArabicWordFromNumber(beforePoint) + SPACE_SEPARATOR + currency;
+            }
+
+            if (number.contains(".")) {
+                String afterPoint = (number.split(POINT_SEPARATOR).length < TWO_ELEMENTS) ? "" : number.split(POINT_SEPARATOR)[1];
+                if (!afterPoint.isEmpty()) {
+                    if (afterPoint.length() > LENGTH_MAX_VALUE)
+                        return mContext.getResources().getString(R.string.error_text);
+
+                    word += (!beforePoint.isEmpty() ? ARABIC_AND_SEPARATOR : "")
+                            + getArabicWordFromNumber(afterPoint) + SPACE_SEPARATOR + ARABIC_CENTS;
                 }
-
-                word += (!beforePoint.equals("") ? FRENCH_AND_SEPARATOR : "")
-                        + getArabicWordFromNumber(afterPoint) + SPACE_SEPARATOR + ARABIC_CENTS;
             }
         }
-
         return word;
     }
 
@@ -136,24 +147,25 @@ public class Utils {
     // ---------- FRENCH -------------
     public static String getFrenchWord(String number, String currency) {
         String word = "";
-        String beforePoint = number.split(POINT_SEPARATOR)[0];
-        if (beforePoint.equals("1000000000000000L")) {
-            return "Erreur";
-        }
+        if (!number.equals(".")) {
+            String beforePoint = number.split(POINT_SEPARATOR)[0];
 
-        if (!beforePoint.isEmpty()) {
-            word = getFrenchWordFromNumber(beforePoint) + SPACE_SEPARATOR + currency;
-        }
+            if (beforePoint.length() > LENGTH_MAX_VALUE)
+                return mContext.getResources().getString(R.string.error_text);
 
-        if (number.contains(".")) {
-            String afterPoint = (number.split(POINT_SEPARATOR).length < TWO_ELEMENTS) ? "" : number.split(POINT_SEPARATOR)[1];
-            if (!afterPoint.isEmpty()) {
-                if (afterPoint.equals("1000000000000000L")) {
-                    return "Erreur";
+            if (!beforePoint.isEmpty()) {
+                word = getFrenchWordFromNumber(beforePoint) + SPACE_SEPARATOR + currency;
+            }
+
+            if (number.contains(".")) {
+                String afterPoint = (number.split(POINT_SEPARATOR).length < TWO_ELEMENTS) ? "" : number.split(POINT_SEPARATOR)[1];
+                if (!afterPoint.isEmpty()) {
+                    if (afterPoint.length() > LENGTH_MAX_VALUE)
+                        return mContext.getResources().getString(R.string.error_text);
+
+                    word += (!beforePoint.isEmpty() ? FRENCH_AND_SEPARATOR : "")
+                            + getFrenchWordFromNumber(afterPoint) + SPACE_SEPARATOR + FRENCH_CENTS;
                 }
-
-                word += (!beforePoint.equals("") ? FRENCH_AND_SEPARATOR : "")
-                        + getFrenchWordFromNumber(afterPoint) + SPACE_SEPARATOR + FRENCH_CENTS;
             }
         }
 

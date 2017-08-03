@@ -9,7 +9,8 @@
     <string name="no_amount">Veuillez saisir un montant</string>
     <string name="amount_copied">Le text a été copié</string>
     <string name="action_settings">Paramètres</string>
+    <string name="language_text">Français</string>
+    <string name="error_text">Erreur</string>
 
     <string name="io.branch.apiKey" translatable="false">key_live_emyr4cLKIsadx9sDczQetefexyoJLMRK</string>
-    <string name="language_text">Français</string>
 </resources>
