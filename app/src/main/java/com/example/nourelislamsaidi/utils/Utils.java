@@ -11,6 +11,8 @@ public class Utils {
     private static final String ARABIC_CENTS = "سنت";
     private static final String ARABIC_AND_SEPARATOR = " و";
 
+    private static final int TWO_ELEMENTS = 2;
+
     // ---------- ARABIC -------------
     public static String getArabicWord(String number, String currency) {
         String word = "";
@@ -24,13 +26,15 @@ public class Utils {
         }
 
         if (number.contains(".")) {
-            String afterPoint = number.split(POINT_SEPARATOR)[1];
-            if (afterPoint.equals("1000000000000000L")) {
-                return "Erreur";
-            }
+            String afterPoint = (number.split(POINT_SEPARATOR).length < TWO_ELEMENTS) ? "" : number.split(POINT_SEPARATOR)[1];
+            if (!afterPoint.isEmpty()) {
+                if (afterPoint.equals("1000000000000000L")) {
+                    return "Erreur";
+                }
 
-            word += (!beforePoint.equals("") ? FRENCH_AND_SEPARATOR : "")
-                    + getArabicWordFromNumber(afterPoint) + SPACE_SEPARATOR + ARABIC_CENTS;
+                word += (!beforePoint.equals("") ? FRENCH_AND_SEPARATOR : "")
+                        + getArabicWordFromNumber(afterPoint) + SPACE_SEPARATOR + ARABIC_CENTS;
+            }
         }
 
         return word;
@@ -137,18 +141,20 @@ public class Utils {
             return "Erreur";
         }
 
-        if (!beforePoint.equals("")) {
+        if (!beforePoint.isEmpty()) {
             word = getFrenchWordFromNumber(beforePoint) + SPACE_SEPARATOR + currency;
         }
 
         if (number.contains(".")) {
-            String afterPoint = number.split(POINT_SEPARATOR)[1];
-            if (afterPoint.equals("1000000000000000L")) {
-                return "Erreur";
-            }
+            String afterPoint = (number.split(POINT_SEPARATOR).length < TWO_ELEMENTS) ? "" : number.split(POINT_SEPARATOR)[1];
+            if (!afterPoint.isEmpty()) {
+                if (afterPoint.equals("1000000000000000L")) {
+                    return "Erreur";
+                }
 
-            word += (!beforePoint.equals("") ? FRENCH_AND_SEPARATOR : "")
-                    + getFrenchWordFromNumber(afterPoint) + SPACE_SEPARATOR + FRENCH_CENTS;
+                word += (!beforePoint.equals("") ? FRENCH_AND_SEPARATOR : "")
+                        + getFrenchWordFromNumber(afterPoint) + SPACE_SEPARATOR + FRENCH_CENTS;
+            }
         }
 
         return word;

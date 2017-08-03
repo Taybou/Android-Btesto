@@ -24,12 +24,14 @@ public class ExampleUnitTest {
     @Test
     public void testDigitFrench() throws Exception {
         // TEST ANY
+        assertEquals("vingt-six EURO", Utils.getFrenchWord("26.", "EURO"));
 
         // FAKE USE CASE :p
         // assertEquals("zero EURO", Utils.getFrenchWord(".00000123", "EURO"));
 
         assertEquals("zero EURO", Utils.getFrenchWord("0", "EURO"));
         assertEquals("vingt-six CENTIMES", Utils.getFrenchWord(".26", "EURO"));
+        assertEquals("vingt-six EURO", Utils.getFrenchWord("26.", "EURO"));
         assertEquals("vingt et un EURO et vingt-six CENTIMES", utils.getFrenchWord("21.26", "EURO"));
         assertEquals("vingt et un EURO", utils.getFrenchWord("21", "EURO"));
         assertEquals("vingt-six EURO", utils.getFrenchWord("26", "EURO"));
