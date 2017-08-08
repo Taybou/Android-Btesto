@@ -1,10 +1,13 @@
 package com.example.nourelislamsaidi.activities;
 
+import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -28,6 +31,7 @@ import com.example.nourelislamsaidi.numbertowords.R;
 import com.example.nourelislamsaidi.utils.Utils;
 import com.example.nourelislamsaidi.views.LanguageBtnView;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
@@ -41,10 +45,12 @@ public class MainActivity extends AppCompatActivity
     private TextView mWordAmount;
 
     private ImageView mClearView;
-    private ImageView mSpeechView;
+    private ImageView mTextToSpeechView;
     private ImageView mCopyView;
+    private ImageView mSpeechToTextView;
 
     private TextToSpeech mTextToSpeech;
+    private final int REQ_CODE_SPEECH_INPUT = 100;
 
     Animation mAnim;
     private ClipboardManager mClipboardManager;
@@ -142,7 +148,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.copy_btn:
                 copyText();
                 break;
-
+            case R.id.speech_to_txt_btn :
+                promptSpeechInput();
+                break;
 
         }
     }
@@ -159,8 +167,11 @@ public class MainActivity extends AppCompatActivity
         mCopyView = (ImageView) findViewById(R.id.copy_btn);
         mCopyView.setOnClickListener(this);
 
-        mSpeechView = (ImageView) findViewById(R.id.speech_btn);
-        mSpeechView.setOnClickListener(this);
+        mTextToSpeechView = (ImageView) findViewById(R.id.speech_btn);
+        mTextToSpeechView.setOnClickListener(this);
+
+        mSpeechToTextView = (ImageView) findViewById(R.id.speech_to_txt_btn);
+        mSpeechToTextView.setOnClickListener(this);
 
         mLanguageBtnView.setIconVisibility(View.GONE);
         mCurrencyBtnView.setIconVisibility(View.GONE);
@@ -250,4 +261,52 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, R.string.no_amount, Toast.LENGTH_SHORT).show();
         }
     }
+
+    /**
+     * Showing google speech input dialog
+     * */
+    private void promptSpeechInput() {
+        mEditNumber.setText("");
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_prompt));
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.speech_not_supported),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Receiving speech input
+     * */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case REQ_CODE_SPEECH_INPUT: {
+                if (resultCode == RESULT_OK && null != data) {
+
+                    ArrayList<String> result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    String amount = result.get(0).replaceAll("[^\\d.]", "");
+                    if(!amount.isEmpty()){
+                    mEditNumber.setText(amount);
+                    } else {
+                        Toast.makeText(this, R.string.speech_almount_error, Toast.LENGTH_SHORT).show();
+                        mEditNumber.setText("");
+                    }
+                }
+                break;
+            }
+
+        }
+    }
+
 }
