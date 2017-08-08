@@ -170,7 +170,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setData() {
-        mLanguageBtnView.setText("Français");
+        String language = getResources().getString(R.string.language_text);
+
+        mLanguageBtnView.setText(language);
         mCurrencyBtnView.setText("EURO");
     }
 
@@ -184,6 +186,8 @@ public class MainActivity extends AppCompatActivity
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() != 0) {
                     animateEditText(false);
+
+                    Utils.setContext(getApplicationContext());
                     String frenchWord = Utils.getFrenchWord(s.toString(), mCurrencyBtnView.getText());
                     mWordAmount.setText(frenchWord);
                 } else {

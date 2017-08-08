@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">NumberToWords</string>
 
@@ -5,11 +6,11 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="hint">8888</string>
-    <string name="no_amount">Please enter an amount</string>
-    <string name="amount_copied">Text has been copied</string>
-    <string name="action_settings">Settings</string>
-    <string name="language_text">French</string>
-    <string name="error_text">Error</string>
+    <string name="no_amount">Veuillez saisir un montant</string>
+    <string name="amount_copied">Le text a été copié</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="language_text">Français</string>
+    <string name="error_text">Erreur</string>
 
     <string name="io.branch.apiKey" translatable="false">key_live_emyr4cLKIsadx9sDczQetefexyoJLMRK</string>
 </resources>

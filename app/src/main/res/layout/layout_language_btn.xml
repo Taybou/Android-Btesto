@@ -16,7 +16,7 @@
         android:textColor="@color/colorPrimary"
         android:textSize="18sp"
         android:textStyle="bold"
-        tools:text="Français"/>
+        tools:text="@string/language_text"/>
 
     <ImageView
         android:id="@+id/language_btn_icon"
