@@ -13,5 +13,8 @@
     <string name="default_lang">Français</string>
     <string name="default_currancy">Euro</string>
 
+    <string name="speech_prompt">Please, say something</string>
+    <string name="speech_not_supported">Sorry! Your device does not have this featuren</string>
+
     <string name="io.branch.apiKey" translatable="false">key_live_emyr4cLKIsadx9sDczQetefexyoJLMRK</string>
 </resources>

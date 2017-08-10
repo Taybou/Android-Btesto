@@ -12,10 +12,6 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -35,18 +31,20 @@ import com.example.nourelislamsaidi.utils.Utils;
 import com.example.nourelislamsaidi.views.LanguageBtnView;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static com.example.nourelislamsaidi.activities.LangListActivity.newIntent;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-        View.OnClickListener {
+        implements View.OnClickListener {
 
     private static final String LANGUE = "langue";
     private static final String CURRANCY = "currancy";
     private static final String SHARED_PREF_KEY = "textKey";
-    private static String mLastLanguage;
+    private static final String POSITION = "position";
+    private static int mLangPosition;
+
     private LanguageBtnView mLanguageBtnView;
     private LanguageBtnView mCurrencyBtnView;
 
@@ -61,13 +59,20 @@ public class MainActivity extends AppCompatActivity
     private TextToSpeech mTextToSpeech;
     private final int REQ_CODE_SPEECH_INPUT = 100;
 
-    Animation mAnim;
+    private Animation mAnim;
     private ClipboardManager mClipboardManager;
     private String mLangueText;
     private String mCurrancyText;
 
+    private String mCurrentlangueText;
+    private String mCurrentCurrancyText;
+    private List<String> arabicCurrency = new ArrayList();
+    private static SharedPreferences sp;
+    private static SharedPreferences.Editor sedt;
+
+
     @NonNull
-    public static Intent newMainIntent(Activity activity, String langues, int id) {
+    public static Intent newMainIntent(Activity activity, String langues, int id, int position) {
         Intent intent = new Intent(activity, MainActivity.class);
         switch (id) {
             case 1:
@@ -75,12 +80,16 @@ public class MainActivity extends AppCompatActivity
                 break;
             case 2:
                 intent.putExtra(CURRANCY, langues);
+                mLangPosition = position;
+                sedt.putInt(POSITION, position);
+                sedt.commit();
                 break;
 
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         return intent;
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,31 +98,13 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
+        initArabCurrancyList();
         intAmountToSpeech();
         initAnimation();
         initViews();
         setData();
 
         mClipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
     }
 
     @Override
@@ -136,31 +127,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
     @Override
@@ -201,15 +167,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initViews() {
-        SharedPreferences sp = getSharedPreferences(SHARED_PREF_KEY, 0);
-        String langueText = sp.getString(LANGUE, "");
-        String currancyText = sp.getString(CURRANCY, "");
+        sp = getSharedPreferences(SHARED_PREF_KEY, 0);
+        mCurrentlangueText = sp.getString(LANGUE, "");
+        mCurrentCurrancyText = sp.getString(CURRANCY, "");
+        int position = sp.getInt(POSITION, 0);
         mLanguageBtnView = (LanguageBtnView) findViewById(R.id.language_btn);
-        mLanguageBtnView.setText(!currancyText.isEmpty() ? langueText : getResources().getString(R.string.default_lang));
+        mLanguageBtnView.setText(!mCurrentlangueText.isEmpty() ? mCurrentlangueText : getResources().getString(R.string.default_lang));
         mLanguageBtnView.setOnClickListener(this);
 
         mCurrencyBtnView = (LanguageBtnView) findViewById(R.id.currency_btn);
-        mCurrencyBtnView.setText(!currancyText.isEmpty() ? currancyText : getResources().getString(R.string.default_currancy));
+        mCurrencyBtnView.setText(!mCurrentCurrancyText.isEmpty() ? mCurrentCurrancyText : getResources().getString(R.string.default_currancy));
+        mLangPosition = (position < 0 ? 1 : position);
         mCurrencyBtnView.setOnClickListener(this);
 
         mEditNumber = (EditText) findViewById(R.id.edit_number);
@@ -227,17 +195,25 @@ public class MainActivity extends AppCompatActivity
         mSpeechToTextView = (ImageView) findViewById(R.id.speech_to_txt_btn);
         mSpeechToTextView.setOnClickListener(this);
 
+
+        if (mCurrentlangueText.equals("Arabe")) {
+            displaySpeechIcons(false);
+        } else {
+            displaySpeechIcons(true);
+        }
+
         animateEditText(true);
         onEditNumberTextChange();
     }
 
     private void setData() {
         SharedPreferences sp = getSharedPreferences(SHARED_PREF_KEY, 0);
-        SharedPreferences.Editor sedt = sp.edit();
+        sedt = sp.edit();
         getExtraIntent();
         if (mLangueText != null) {
             if (!mLangueText.isEmpty()) {
                 mLanguageBtnView.setText(mLangueText);
+                mCurrentlangueText = mLangueText;
                 sedt.putString(LANGUE, mLanguageBtnView.getText().toString());
             }
         }
@@ -256,6 +232,13 @@ public class MainActivity extends AppCompatActivity
         String currancy = intent.getStringExtra(CURRANCY);
         mLangueText = langueText;
         mCurrancyText = currancy;
+        if (mLangueText != null) {
+            if (mLangueText.equals("Arabe")) {
+                displaySpeechIcons(false);
+            } else {
+                displaySpeechIcons(true);
+            }
+        }
     }
 
     private void onEditNumberTextChange() {
@@ -268,8 +251,13 @@ public class MainActivity extends AppCompatActivity
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() != 0) {
                     animateEditText(false);
-                    String frenchWord = Utils.getFrenchWord(s.toString(), mCurrencyBtnView.getText());
-                    mWordAmount.setText(frenchWord);
+                    String word = "";
+                    if (mCurrentlangueText.equals("Français")) {
+                        word = Utils.getFrenchWord(s.toString(), mCurrencyBtnView.getText());
+                    } else if (mCurrentlangueText.equals("Arabe")) {
+                        word = Utils.getArabicWord(s.toString(), arabicCurrency.get(mLangPosition));
+                    }
+                    mWordAmount.setText(word);
                 } else {
                     mWordAmount.setText("");
                 }
@@ -279,6 +267,20 @@ public class MainActivity extends AppCompatActivity
             public void afterTextChanged(Editable s) {
             }
         });
+    }
+
+    private void displaySpeechIcons(boolean isDisplay) {
+        if (!isDisplay) {
+            mTextToSpeechView.setAlpha(0.5f);
+            mTextToSpeechView.setEnabled(false);
+            mSpeechToTextView.setAlpha(0.5f);
+            mSpeechToTextView.setEnabled(false);
+        } else {
+            mTextToSpeechView.setAlpha(1f);
+            mTextToSpeechView.setEnabled(true);
+            mSpeechToTextView.setAlpha(1f);
+            mSpeechToTextView.setEnabled(true);
+        }
     }
 
     private void initAnimation() {
@@ -331,6 +333,22 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void initArabCurrancyList() {
+
+        arabicCurrency.add("يورو");
+        arabicCurrency.add("دولار");
+        arabicCurrency.add("الدينار الجزائري");
+        arabicCurrency.add("ين ياباني");
+        arabicCurrency.add("فرنك سويسر ");
+        arabicCurrency.add("يوان صيني");
+        arabicCurrency.add("الجنيه الاسترليني");
+        arabicCurrency.add("ليرة تركية");
+        arabicCurrency.add("روبل روسي");
+        arabicCurrency.add("روبية هندية");
+        arabicCurrency.add("ريال برازيلي");
+        arabicCurrency.add("راند جنوب-أفريقيا");
+    }
+
     /**
      * Showing google speech input dialog
      */
@@ -368,7 +386,7 @@ public class MainActivity extends AppCompatActivity
                     if (!amount.isEmpty()) {
                         mEditNumber.setText(amount);
                     } else {
-                        Toast.makeText(this, R.string.speech_almount_error, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.no_amount, Toast.LENGTH_SHORT).show();
                         mEditNumber.setText("");
                     }
                 }
@@ -377,5 +395,4 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
-
 }

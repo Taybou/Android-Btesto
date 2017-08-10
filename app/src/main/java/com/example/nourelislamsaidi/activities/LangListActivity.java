@@ -69,9 +69,9 @@ public class LangListActivity extends AppCompatActivity {
                 Intent intent;
                 if (mDataList.contains("Euro")) {
 
-                    intent = MainActivity.newMainIntent(mActivity, mDataList.get(position), 2);
+                    intent = MainActivity.newMainIntent(mActivity, mDataList.get(position), 2, position);
                 } else {
-                    intent = MainActivity.newMainIntent(mActivity, mDataList.get(position), 1);
+                    intent = MainActivity.newMainIntent(mActivity, mDataList.get(position), 1, position);
 
                 }
                 startActivity(intent);
